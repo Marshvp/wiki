@@ -1,5 +1,5 @@
-from django.shortcuts import render
-from .util import get_entry
+from django.shortcuts import render, redirect
+from .util import get_entry, list_entries
 import markdown2
 import os
 from . import util
@@ -12,10 +12,13 @@ def index(request):
 
 def entry_detail(request, title):
     entry_content = get_entry(title)
-    return render(request, 'entry_detail.html', {'title': title, 'content': entry_content})
-''' def pages():
-        util.get_entry(title)
-    '''
+
+    if entry_content is None:
+        return render(request, 'encyclopedia/404.html', status=404)
+    
+
+    return content_page(request, filename=title)
+
 
 def content_page(request,filename):
     file_path = os.path.join('entries', filename + '.md')
@@ -27,5 +30,6 @@ def content_page(request,filename):
     except FileNotFoundError:
         html_content = "<p>File Not Found.</p>"
 
-    return render(request, 'encyclopedia/contents.html', {'html_content': html_content})
+    return render(request, 'encyclopedia/wiki.html', {'html_content': html_content, 'filename': filename})
+
         

@@ -3,6 +3,7 @@ from .util import get_entry, list_entries, save_entry
 import markdown2
 import os
 from . import util
+import random
 
 
 def index(request):
@@ -16,7 +17,7 @@ def entry_detail(request, title):
     if entry_content is None:
         return render(request, 'encyclopedia/404.html', status=404)
     
-
+    
     return content_page(request, filename=title)
 
 
@@ -91,3 +92,11 @@ def edit_page(request, title):
         content = get_entry(title)
         
         return render(request, 'encyclopedia/edit_page.html', {'title': title, 'content': content})
+    
+
+
+def random_page(request):
+
+    entries = list_entries()
+    random_entry = random.choice(entries)
+    return redirect('entry_detail', title=random_entry)

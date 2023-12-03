@@ -32,4 +32,22 @@ def content_page(request,filename):
 
     return render(request, 'encyclopedia/wiki.html', {'html_content': html_content, 'filename': filename})
 
+
+
+
+def search_results(request):
+    
+    query = request.GET.get('q', '')
+    entries = list_entries()
+
+    matching_entries = [entry for entry in entries if query.lower() in entry.lower()]
+
+    if matching_entries:
+        if len(matching_entries) == 1 and matching_entries[0].lower() == query.lower():
+            return entry_detail(request, title=matching_entries[0])
         
+        return render(request, 'encyclopedia/search_results.html', {'results': matching_entries, 'query': query})
+    
+    else:
+        return render(request, 'encyclopedia/search_results.html', {'results': entries, 'query': query})
+

@@ -1,5 +1,5 @@
 from django.shortcuts import render, redirect
-from .util import get_entry, list_entries
+from .util import get_entry, list_entries, save_entry
 import markdown2
 import os
 from . import util
@@ -51,3 +51,24 @@ def search_results(request):
     else:
         return render(request, 'encyclopedia/search_results.html', {'results': entries, 'query': query})
 
+
+def new_page(request):
+
+    if request.method == 'POST':
+
+        title = request.POST.get('title', "")
+        content = request.POST.get('content', "")
+
+        if not title or not content:
+            error_message = "Title and Content are both required."
+            return render(request, 'encyclopedia/new_page.html', {'error_message': error_message})
+
+        if get_entry(title) is not None:
+            error_message = f"Title '{title}' is already in use. Please pick another one."
+            return render(request, 'encyclopedia/new_page.html', {'error_message': error_message})
+    
+        save_entry(title, content)
+        return redirect(entry_detail, title=title)
+
+    else:
+        return render(request, 'encyclopedia/new_page.html')

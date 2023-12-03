@@ -72,3 +72,22 @@ def new_page(request):
 
     else:
         return render(request, 'encyclopedia/new_page.html')
+    
+
+def edit_page(request, title):
+    
+    if request.method == 'POST':
+        
+        content = request.POST.get('content', "")
+
+        if not content:
+            error_message = "Content Required."
+            return render(request, 'encyclopedia/edit_page.html', {'error': error_message})
+        
+        save_entry(title, content)
+        return redirect('entry_detail', title=title)
+
+    else:
+        content = get_entry(title)
+        
+        return render(request, 'encyclopedia/edit_page.html', {'title': title, 'content': content})
